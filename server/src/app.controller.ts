@@ -9,25 +9,21 @@ const client = new OAuth2Client(
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private appService: AppService) {}
 
   @Post('/login')
-  async login(
-	@Body('token') token
-  ): Promise<any> {
+  async login(@Body('token') token): Promise<any> {
 	const ticket = await client.verifyIdToken({
 	idToken: token,
 	audience: process.env.GOOGLE_CLIENT_ID
+  });
+
+  const payload = ticket.getPayload();
+  const data = await this.appService.login({
+	email: payload.email,
+	name: payload.name,
+	image:payload.picture
   })
-  console.log(ticket.getPayload())
-  return {
-	success: true
-  }
+  return data;
   }
 }
-
-// 유튜브 33분 40초
-// 로그인정보 토큰으로 만들어서 서버에 티켓으로 가져오기까지 성공함
-
-// 클라이언트 키는법 yarn dev 
-// 서버 키는법  yarn start::dev

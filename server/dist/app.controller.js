@@ -26,10 +26,13 @@ let AppController = exports.AppController = class AppController {
             idToken: token,
             audience: process.env.GOOGLE_CLIENT_ID
         });
-        console.log(ticket.getPayload());
-        return {
-            success: true
-        };
+        const payload = ticket.getPayload();
+        const data = await this.appService.login({
+            email: payload.email,
+            name: payload.name,
+            image: payload.picture
+        });
+        return data;
     }
 };
 __decorate([
